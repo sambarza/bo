@@ -1,7 +1,7 @@
 '''
 Created on 10/feb/2013
 
-@author: barzaghis
+@author: sambarza@gmail.com
 '''
 
 class Events(object):

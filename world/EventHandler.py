@@ -1,7 +1,7 @@
 '''
 Created on 14/feb/2013
 
-@author: barzaghis
+@author: sambarza@gmail.com
 '''
 
 from Events import Events
@@ -16,7 +16,7 @@ class EventHandler(object):
         Constructor
         '''
         self.ywn = ywn
-        
+
         self.ywn.accept('mouse1-up',self.eventLeftMouseUp)
         self.ywn.accept('mouse3-up',self.eventRightMouseUp)
         

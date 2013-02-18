@@ -1,7 +1,7 @@
 '''
 Created on 11/feb/2013
 
-@author: barzaghis
+@author: sambarza@gmail.com
 '''
 
 class Things(object):

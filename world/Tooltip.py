@@ -1,7 +1,7 @@
 '''
 Created on 13/feb/2013
 
-@author: barzaghis
+@author: sambarza@gmail.com
 '''
 
 from pandac.PandaModules import TextNode
