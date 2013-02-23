@@ -10,6 +10,7 @@ from pandac.PandaModules import Vec4
 
 from ywnThingFsm import ywnThingFsm
 from world.Camera import Camera
+from world.Events import Events
 
 class Thing(object):
     '''
@@ -68,8 +69,8 @@ class Thing(object):
         lighting = LerpColorScaleInterval(self.model, 0.1, Vec4(5,5,5,1), blendType ='easeIn')
         lighting.start()
         
-        self.ywn.tooltip.setText(self.getDefaultAction() + " " + self.getThingName() + " " + self.Id)
-        
+        self.updateTooltip()
+                
     def lightsOff(self):
         
         delighting = LerpColorScaleInterval(self.model, 0.1, Vec4(0.5,0.5,0.5,1), blendType ='easeOut')
@@ -87,6 +88,28 @@ class Thing(object):
         
         print self.getThingInfo() + " got focus"
         
-    def leftMouseClick(self):
+    def onLeftMouseClick(self):
         
-        pass
+        self.request(Events.leftMouseClick)
+    
+    def onRightMouseClick(self):
+        
+        self.request(Events.rightMouseClick)
+
+    def onMouseHoverIn(self, previousThing, mouseOnInfo):
+        self.request(Events.mouseOnYou)
+           
+    def onMouseHoverOut(self, newThing):
+        self.request(Events.mouseOnOthers)
+    
+    def canGetMouseHover(self):
+        return True
+    
+    def updateTooltip(self):
+        self.ywn.tooltip.setText(self.getDefaultAction() + " " + self.getThingName() + " " + self.Id)
+        
+    def onMouseMoving(self, mouseOnInfo, previousMouseOnInfo):
+        
+        self.ywn.tooltip.setText(mouseOnInfo.nodeId + " " + self.getThingName() + " " + self.Id)
+        
+    

@@ -9,6 +9,17 @@ from pandac.PandaModules import CollisionHandlerQueue
 from pandac.PandaModules import CollisionTraverser
 from pandac.PandaModules import BitMask32
 
+class MouseOnInfo():
+    
+    def __init__(self, thing, thingId, node, nodeId, mouse_x, mouse_y):
+        
+        self.thing = thing
+        self.thingId = thingId
+        self.node = node
+        self.nodeId = nodeId
+        self.mouse_x = mouse_x
+        self.mouse_y = mouse_y
+        
 class Picker(object):
     '''
     classdocs
@@ -35,18 +46,7 @@ class Picker(object):
         self.picker = CollisionTraverser()
         self.picker.addCollider(self.pickerNP, self.pq)
         
-    def getMouseOn(self):
-        
-        #Check to see if we can access the mouse. We need it to do anything else
-        if not self.mouseWatcherNode.hasMouse():
-            
-            return None
-
-        #get the mouse position
-        mpos = self.mouseWatcherNode.getMouse()
-
-        mouse_x = mpos.getX()
-        mouse_y = mpos.getY()
+    def getMouseOn(self, mouse_x, mouse_y):
         
         #Set the position of the ray based on the mouse position
         self.pickerRay.setFromLens(self.camNode, mouse_x, mouse_y)
@@ -57,8 +57,13 @@ class Picker(object):
             #if we have hit something, sort the hits so that the closest
             #is first, and highlight that node
             self.pq.sortEntries()
-
-            thing_id = self.pq.getEntry(0).getIntoNode().getTag('ID')
             
-            return self.things.getById(thing_id)
+            selectedNode = self.pq.getEntry(0).getIntoNode()
+            
+            selectedNodeId = selectedNode.getTag('nodeId')
+            thingId        = selectedNode.getTag('ID')
+            
+            mouseOnInfo = MouseOnInfo(self.things.getById(thingId), thingId, selectedNode, selectedNodeId, mouse_x, mouse_y)
+             
+            return mouseOnInfo
                                         

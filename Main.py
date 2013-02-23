@@ -12,6 +12,7 @@ from pandac.PandaModules import AmbientLight
 from pandac.PandaModules import PointLight
 from pandac.PandaModules import VBase4
 
+from world.MouseWatcher import MouseWatcher
 from world.Camera import Camera
 from world.Things import Things
 from world.Picker import Picker
@@ -22,6 +23,8 @@ from world.things.book.Book import Book
 from world.things.bookshelf.Bookshelf import Bookshelf
 from world.things.box.Box import Box
 from world.things.lightswitch.Lightswitch import Lightswitch
+from world.things.calculator.Calculator import Calculator
+from world.Picker import MouseOnInfo
 
 #from panda3d.core import loadPrcFileData
 #loadPrcFileData("", "want-directtools #t")
@@ -53,6 +56,8 @@ class Ywn(ShowBase):
     def initializeCamera(self):
         
         self.camera = Camera(self.render, self.camera, self.eventHandler)
+        
+        self.camLens.setFov(90)
                
     def initializeThings(self):
         
@@ -67,31 +72,19 @@ class Ywn(ShowBase):
     def initializeMouseWatcher(self):
     
         self.mouseOn = None
+        self.mouseOnInfo = None
+        
         self.previousMouseOn = None
+        self.previousMouseOnInfo = None
+        
         self.mouse_x = 0
         self.mouse_y = 0
         
-        self.taskMgr.add(self.taskMouseOn, 'getMouseOn')
+        self.mouseOn = mouseOn
+        self.mouseOnInfo = mouseOnInfo
+
+        self.mouseWatcher = MouseWatcher(self.taskMgr, self.eventHandler, self.picker, self.mouseOn, self.previousMouseOn, self.mouseOnInfo, self.previousMouseOnInfo, self.mouse_x, self.mouse_y)
         
-    def taskMouseOn(self, task):
-        
-        if not base.mouseWatcherNode.hasMouse():
-            
-            return task.cont
-        
-        self.previousMouseOn = self.mouseOn
-        self.mouseOn = self.picker.getMouseOn()
-        
-        mpos = base.mouseWatcherNode.getMouse()
-        
-        self.mouse_x = mpos.getX()
-        self.mouse_y = mpos.getY()
-        
-        if self.mouseOn <> self.previousMouseOn:
-            self.eventHandler.eventMouseOnNewThing(self.previousMouseOn, self.mouseOn)
-            
-        return task.cont
-    
     def initializeTooltip(self):
         
         self.tooltip = Tooltip(self)
@@ -177,6 +170,12 @@ class Ywn(ShowBase):
         lightswitch.setLookFrom('W')
         
         self.things.add(lightswitch)
+        
+        calculator = Calculator(self)
+        calculator.setPosHprScale(11.50, 5, 7.0, 90.00, -90.00, 0.00, 1, 1, 1)
+        calculator.setLookFrom('W')
+        
+        self.things.add(calculator)
         
     def setFocusOn(self, thing):
         

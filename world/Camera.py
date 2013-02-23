@@ -18,8 +18,10 @@ class Camera(object):
     
     STATE_MOVING_TO_THING = 'STATE_MOVING_TO_THING'
     STATE_MOVING_TO_HOME = 'STATE_MOVING_TO_HOME'
+    STATE_TURNING = 'STATE_TURNING'
     STATE_STILL_AT_HOME = 'STATE_STILL_AT_HOME' 
     STATE_STILL_AT_THING = 'STATE_STILL_AT_THING'
+    STATE_STILL = 'STATE_STILL'
     
     def __init__(self, render, camera, eventHandler):
         '''
@@ -27,11 +29,12 @@ class Camera(object):
         '''
         
         self.camera = camera
+        
         self.eventHandler = eventHandler
         
         self.followerCamera = render.attachNewNode("followerCamera")
         
-        self.state = self.STATE_STILL_AT_HOME
+        self.state = Camera.STATE_STILL_AT_HOME
         self.movingInterval = None
         self.lookingAt = None
         self.movingTo = None
@@ -39,21 +42,19 @@ class Camera(object):
         self.cameraOriginalPos = Vec3(0.00, -17.00, 8.00)
         self.cameraOriginalHpr = Vec3(0,0,0)
         
+        self.duration = 0.50
+        self.multi = 1.25
+        self.lastDegree = 0
+        
     def goHome(self):
         
         print "Camera go home!"
-        
-        if self.state == self.STATE_MOVING_TO_THING:
-            self.movingInterval.pause()
-            self.movingInterval = None
-           
-            self.eventHandler.cameraDeviated(self.movingTo)
-
-            self.movingTo = None
-            
-        if self.state == self.STATE_MOVING_TO_HOME:
+                   
+        if self.state == Camera.STATE_MOVING_TO_HOME:
             return
-            
+        
+        self.concludeCurrentMovement()
+
         self.followerCamera.setPos(self.cameraOriginalPos)
         self.followerCamera.setHpr(self.cameraOriginalHpr)
         
@@ -64,32 +65,25 @@ class Camera(object):
         
         self.movingInterval.start()
         
-        self.state = self.STATE_MOVING_TO_HOME
-        self.lookingAt = None
+        self.state = Camera.STATE_MOVING_TO_HOME
+        self.lookingAtNothing()
         
         self.eventHandler.cameraGoingHome()
+        
+    def lookingAtNothing(self):
+        
+        self.lookingAt = None
         
     def arrivedAtHome(self):
         
         print "Camera arrived at home"
         
-        self.state = self.STATE_STILL_AT_HOME
+        self.state = Camera.STATE_STILL_AT_HOME
         
     def lookAt(self, thing):
         
-         
-        if self.state == self.STATE_MOVING_TO_THING:
+        self.concludeCurrentMovement()
             
-            self.movingInterval.pause()
-            self.movingInterval = None
-            
-            self.eventHandler.cameraDeviated(self.movingTo)
-            
-        if self.state == self.STATE_MOVING_TO_HOME:
-            
-            self.movingInterval.pause()
-            self.movingInterval = None
-                
         model = thing.model
         self.movingTo = thing
         
@@ -163,7 +157,7 @@ class Camera(object):
                
         self.movingInterval.start()
         
-        self.state = self.STATE_MOVING_TO_THING
+        self.state = Camera.STATE_MOVING_TO_THING
                 
         if self.camera.getH() == 360:
             self.camera.setH(0)
@@ -174,9 +168,71 @@ class Camera(object):
         
         print "Camera arrived at thing " + self.movingTo.getThingInfo()
         
-        self.state     = self.STATE_STILL_AT_THING
+        self.state     = Camera.STATE_STILL_AT_THING
         self.lookingAt = self.movingTo 
         self.movingTo  = None
         
         self.eventHandler.cameraArrivedAtThing(self.lookingAt)
         
+    def turnFinished(self):
+        
+        self.state = Camera.STATE_STILL
+        self.movingInterval = None
+        
+        self.duration = 0.50
+        self.multi = 1.25
+        self.lastDegree = 0
+        
+    def turn(self, deltaDegree):
+        
+        self.duration = 0.50
+        
+        if (self.lastDegree < 0 and deltaDegree > 0) or (self.lastDegree > 0 and deltaDegree < 0):
+            self.multi = 1.25
+             
+        if self.state == Camera.STATE_TURNING:
+            
+            self.multi = self.multi + 0.25 
+            deltaDegree = deltaDegree * self.multi
+            
+        self.concludeCurrentMovement()
+        
+        newH = self.camera.getH() + deltaDegree
+        
+        self.followerCamera.setH(newH)
+        
+        self.movingInterval = Sequence(LerpHprInterval(self.camera, self.duration, self.followerCamera.getHpr(), blendType='easeOut'), Func(self.turnFinished))
+        self.movingInterval.start()
+
+        self.lastDegree = deltaDegree
+        self.state = Camera.STATE_TURNING
+        self.lookingAtNothing()
+        
+    def lookLeft(self):
+        
+        self.turn(+5)
+        
+    def lookRight(self):
+        
+        self.turn(-5)
+        
+    def concludeCurrentMovement(self):
+        
+        if self.state == Camera.STATE_TURNING:
+            
+            self.movingInterval.pause()
+            self.movingInterval = None
+            
+        if self.state == Camera.STATE_MOVING_TO_THING:
+            
+            self.movingInterval.pause()
+            self.movingInterval = None
+            
+            self.eventHandler.cameraDeviated(self.movingTo)
+            
+            self.movingTo = None
+            
+        if self.state == Camera.STATE_MOVING_TO_HOME:
+            
+            self.movingInterval.pause()
+            self.movingInterval = None

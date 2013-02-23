@@ -26,6 +26,8 @@ class Book(Thing):
         self.model.find("**/Back").node().setIntoCollideMask(BitMask32.bit(1))
         self.model.find("**/Front").node().setTag('ID', self.Id)
         self.model.find("**/Back").node().setTag('ID', self.Id)
+        self.model.find("**/Front").node().setTag('nodeId', "front")
+        self.model.find("**/Back").node().setTag('nodeId', "back")
         
         self.model.setTag('ID', self.Id)
         

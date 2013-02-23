@@ -24,7 +24,7 @@ class ywnThingFsm(FSM):
         self.nextState = {
                           
             (self.AtHome, Events.mouseOnYou) : self.AtHomeWithLightsOn,
-            #(self.AtHome, Events.leftMouseClick) : self.AtHomeWithFocus,
+            (self.AtHome, Events.leftMouseClick) : self.AtHomeWithFocus,
             (self.AtHome, Events.rightMouseClick) : self.AtHome,
             (self.AtHome, Events.mouseOnOthers) : self.AtHome,
             

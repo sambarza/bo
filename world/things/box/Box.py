@@ -22,5 +22,6 @@ class Box(Thing):
         
         self.model.find("**/Cube").node().setIntoCollideMask(BitMask32.bit(1))
         self.model.find("**/Cube").node().setTag('ID', self.Id)
+        self.model.find("**/Cube").node().setTag('nodeId', "cube")
         
         self.model.setTag('ID', self.Id)
