@@ -34,22 +34,17 @@ class EventHandler(object):
 
     def eventLeftMouseUp(self):
                
-        if self.ywn.mouseOn:
-            print "Left Mouse on " + self.ywn.mouseOn.getThingName() + " " + self.ywn.mouseOn.Id
-            self.ywn.mouseOn.onLeftMouseClick()
+        if self.ywn.mouseWatcher.mouseOn:
+            self.ywn.mouseWatcher.mouseOn.onLeftMouseClick()
 
     def eventRightMouseUp(self):
                    
-        print "Right Mouse"
-            
-        if self.ywn.mouseOn:
-            self.ywn.mouseOn.onRightMouseClick()
+        if self.ywn.mouseWatcher.mouseOn:
+            self.ywn.mouseWatcher.mouseOn.onRightMouseClick()
             
         self.ywn.camera.goHome()
 
     def eventMouseOnNewThing(self, previousThing, newThing, mouseOnInfo):
-        
-        print "eventMouseOnNewThing", previousThing, newThing
         
         if previousThing:
             previousThing.onMouseHoverOut(newThing)
@@ -57,9 +52,12 @@ class EventHandler(object):
         if newThing and newThing.canGetMouseHover():
             newThing.onMouseHoverIn(previousThing, mouseOnInfo)
     
-    def cameraGoingHome(self):
+    def eventMouseMovingOnThing(self, mouseOn, mouseOnInfo, previousMouseOnInfo):
         
-        print "cameraGoingHome"
+        if mouseOn != None:
+            mouseOn.onMouseMoving(mouseOnInfo, previousMouseOnInfo)
+
+    def cameraGoingHome(self):
         
         if self.ywn.focusOn != None:
             self.ywn.focusOn.request(Events.cameraGoingHome)
@@ -68,8 +66,6 @@ class EventHandler(object):
     
     def cameraGoingToThing(self, thing):
         
-        print "cameraGoingToThing"
-        
         if self.ywn.focusOn != None:
             self.ywn.focusOn.request(Events.focusRequestedByOthers)
         
@@ -77,19 +73,10 @@ class EventHandler(object):
         
     def cameraArrivedAtThing(self, thing):
         
-        print "cameraArrivedAtThing"
-        
         thing.request(Events.cameraArrivedToYou)
         
         self.ywn.setFocusOn(thing)
         
     def cameraDeviated(self, thing):
         
-        print "cameraDeviated"
-        
         thing.request(Events.cameraDeviated)
-        
-    def eventMouseMovingOnThing(self, mouseOn, mouseOnInfo, previousMouseOnInfo):
-        
-        if mouseOn != None:
-            mouseOn.onMouseMoving(mouseOnInfo, previousMouseOnInfo)

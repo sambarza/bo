@@ -11,7 +11,6 @@ class Tooltip(object):
     classdocs
     '''
 
-
     def __init__(self, ywn):
         '''
         Constructor
@@ -40,20 +39,6 @@ class Tooltip(object):
         
     def taskMouseTooltip(self, task):
         
-        self.tooltipNodePath.setPos(self.ywn.mouse_x * self.ywn.getAspectRatio(), 0, self.ywn.mouse_y)
-        
-        #if self.ywn.previousMouseOn == self.ywn.mouseOn:
-        #    return task.cont
-        
-        #if self.ywn.mouseOn != None:
-        #    
-        #    if self.ywn.mouseOn.fsm.state == None:
-        #        stato = self.ywn.mouseOn.fsm.oldState + "->" + self.ywn.mouseOn.fsm.newState
-        #    else:
-        #        stato = self.ywn.mouseOn.fsm.state
-        #        
-        #    self.tooltip.setText(self.ywn.mouseOn.getThingName() + " " + self.ywn.mouseOn.Id + " Stato: " + stato)
-        #else:
-        #    self.tooltip.clearText()
+        self.tooltipNodePath.setPos(self.ywn.mouseWatcher.mouse_x * self.ywn.getAspectRatio(), 0, self.ywn.mouseWatcher.mouse_y)
         
         return task.cont

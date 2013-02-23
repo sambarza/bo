@@ -6,7 +6,8 @@ Created on 11/feb/2013
 
 from pandac.PandaModules import Vec3
 
-from interval.LerpInterval import LerpHprInterval, LerpPosInterval
+from direct.interval.LerpInterval import LerpHprInterval
+from direct.interval.LerpInterval import LerpPosInterval
 from direct.interval.IntervalGlobal import Sequence
 from direct.interval.IntervalGlobal import Parallel
 from direct.interval.IntervalGlobal import Func
@@ -48,8 +49,6 @@ class Camera(object):
         
     def goHome(self):
         
-        print "Camera go home!"
-                   
         if self.state == Camera.STATE_MOVING_TO_HOME:
             return
         
@@ -66,6 +65,7 @@ class Camera(object):
         self.movingInterval.start()
         
         self.state = Camera.STATE_MOVING_TO_HOME
+
         self.lookingAtNothing()
         
         self.eventHandler.cameraGoingHome()
@@ -75,8 +75,6 @@ class Camera(object):
         self.lookingAt = None
         
     def arrivedAtHome(self):
-        
-        print "Camera arrived at home"
         
         self.state = Camera.STATE_STILL_AT_HOME
         
@@ -116,9 +114,6 @@ class Camera(object):
         self.followerCamera.lookAt(model)
         self.followerCamera.setP(self.followerCamera.getP() + 10)
         
-        print "AttualeAt " + str(self.camera.getHpr())
-        print "LookAt " + str(self.followerCamera.getHpr())
-        
         if self.camera.getH() == -90 and self.followerCamera.getH() == 180:
             self.followerCamera.setH(-180)
         
@@ -147,9 +142,6 @@ class Camera(object):
         if duration < 1:
             duration = 1
         
-        print "Distance from camera to thing " + str(distance)
-        print "Duration " + str(duration)
-        
         self.interv1 = LerpHprInterval(self.camera, duration, self.followerCamera.getHpr(), blendType='easeInOut')
         self.interv2 = LerpPosInterval(self.camera, duration, self.followerCamera.getPos(), blendType='easeInOut')
         
@@ -165,8 +157,6 @@ class Camera(object):
         self.eventHandler.cameraGoingToThing(self.movingTo)
         
     def arrivedAtThing(self):
-        
-        print "Camera arrived at thing " + self.movingTo.getThingInfo()
         
         self.state     = Camera.STATE_STILL_AT_THING
         self.lookingAt = self.movingTo 

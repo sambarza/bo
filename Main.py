@@ -4,7 +4,6 @@ Created on 10/feb/2013
 @author: sambarza@gmail.com
 '''
 
-# Import section
 from direct.showbase.ShowBase import ShowBase
 from direct.showbase.DirectObject import DirectObject
 
@@ -24,7 +23,6 @@ from world.things.bookshelf.Bookshelf import Bookshelf
 from world.things.box.Box import Box
 from world.things.lightswitch.Lightswitch import Lightswitch
 from world.things.calculator.Calculator import Calculator
-from world.Picker import MouseOnInfo
 
 #from panda3d.core import loadPrcFileData
 #loadPrcFileData("", "want-directtools #t")
@@ -71,19 +69,7 @@ class Ywn(ShowBase):
 
     def initializeMouseWatcher(self):
     
-        self.mouseOn = None
-        self.mouseOnInfo = None
-        
-        self.previousMouseOn = None
-        self.previousMouseOnInfo = None
-        
-        self.mouse_x = 0
-        self.mouse_y = 0
-        
-        self.mouseOn = mouseOn
-        self.mouseOnInfo = mouseOnInfo
-
-        self.mouseWatcher = MouseWatcher(self.taskMgr, self.eventHandler, self.picker, self.mouseOn, self.previousMouseOn, self.mouseOnInfo, self.previousMouseOnInfo, self.mouse_x, self.mouse_y)
+        self.mouseWatcher = MouseWatcher(self.taskMgr, self.eventHandler, self.picker)
         
     def initializeTooltip(self):
         
@@ -100,8 +86,7 @@ class Ywn(ShowBase):
         self.house.setPosHprScale(0.00, 0.00, 0.00, 180.00, 0.00, 0.00, 1.26, 1.26, 1.26)
         
     def loadLights(self):
-        ''' Create an Ambient light as well as a point light
-        '''
+
         plight = AmbientLight('my plight')
         plight.setColor(VBase4(0.12, 0.12, 0.12, 1))
         self.plnp = self.render.attachNewNode(plight)

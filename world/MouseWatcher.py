@@ -4,13 +4,6 @@ Created on 23/feb/2013
 @author: barzaghis
 '''
 
-class MouseInfo(object):
-    
-    self.onInfo = None
-    self.previousOnInfo = None
-    self.x = 0
-    self.y = 0
-    
 class MouseWatcher(object):
     '''
     classdocs
@@ -21,6 +14,15 @@ class MouseWatcher(object):
         '''
         Constructor
         '''
+        
+        self.mouseOn = None
+        self.mouseOnInfo = None
+        
+        self.previousMouseOn = None
+        self.previousMouseOnInfo = None
+        
+        self.mouse_x = 0
+        self.mouse_y = 0
         
         self.eventHandler = eventHandler
         
