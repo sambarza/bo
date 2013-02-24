@@ -39,7 +39,7 @@ class ywnThingFsm(FSM):
             (self.AtHomeFocusRequested, Events.cameraArrivedToYou) : self.AtHomeWithFocus,
             (self.AtHomeFocusRequested, Events.cameraDeviated) : self.AtHome,
             
-            (self.AtHomeWithFocus, Events.leftMouseClick) : self.AtDeskWithFocus,
+            (self.AtHomeWithFocus, Events.leftMouseClick) : self.NOTHING,
             (self.AtHomeWithFocus, Events.rightMouseClick) : self.AtHome,
             (self.AtHomeWithFocus, Events.mouseOnYou) : self.NOTHING,
             (self.AtHomeWithFocus, Events.mouseOnOthers) : self.NOTHING,

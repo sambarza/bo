@@ -88,7 +88,11 @@ class Thing(object):
         
         print self.getThingInfo() + " got focus"
         
-    def onLeftMouseClick(self):
+    def onLeftMouseDown(self, mouseOnInfo):
+        
+        print "Left mouse down"
+        
+    def onLeftMouseUp(self, mouseOnInfo):
         
         self.request(Events.leftMouseClick)
     
@@ -97,11 +101,17 @@ class Thing(object):
         self.request(Events.rightMouseClick)
 
     def onMouseHoverIn(self, previousThing, mouseOnInfo):
+        
         self.request(Events.mouseOnYou)
            
     def onMouseHoverOut(self, newThing):
+        
         self.request(Events.mouseOnOthers)
     
+    def onCameraGoingHome(self):
+        
+        self.request(Events.cameraGoingHome)
+        
     def canGetMouseHover(self):
         return True
     

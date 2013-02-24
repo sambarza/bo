@@ -70,7 +70,7 @@ class Lightswitch(Thing):
         self.ywn.render.clearLight(self.ywn.plnp)
         self.ywn.render.clearLight(self.ywn.plnp5)
 
-    def onLeftMouseClick(self):
+    def onLeftMouseUp(self, mouseInfo):
         
         if self.status == Lightswitch.SWITCH_ON:
             self.switchOff()

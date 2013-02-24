@@ -18,7 +18,9 @@ class EventHandler(object):
         '''
         self.ywn = ywn
 
+        self.ywn.accept('mouse1',self.eventLeftMouseDown)
         self.ywn.accept('mouse1-up',self.eventLeftMouseUp)
+        
         self.ywn.accept('mouse3-up',self.eventRightMouseUp)
         self.ywn.accept('wheel_up',self.scrollLeft)
         self.ywn.accept('wheel_down',self.scrollRight)
@@ -32,15 +34,20 @@ class EventHandler(object):
         
         self.ywn.camera.lookRight()
 
+    def eventLeftMouseDown(self):
+               
+        if self.ywn.mouseWatcher.mouseOnInfo:
+            self.ywn.mouseWatcher.mouseOnInfo.thing.onLeftMouseDown(self.ywn.mouseWatcher.mouseOnInfo)
+            
     def eventLeftMouseUp(self):
                
-        if self.ywn.mouseWatcher.mouseOn:
-            self.ywn.mouseWatcher.mouseOn.onLeftMouseClick()
+        if self.ywn.mouseWatcher.mouseOnInfo:
+            self.ywn.mouseWatcher.mouseOnInfo.thing.onLeftMouseUp(self.ywn.mouseWatcher.mouseOnInfo)
 
     def eventRightMouseUp(self):
                    
-        if self.ywn.mouseWatcher.mouseOn:
-            self.ywn.mouseWatcher.mouseOn.onRightMouseClick()
+        if self.ywn.mouseWatcher.mouseOnInfo:
+            self.ywn.mouseWatcher.mouseOnInfo.thing.onRightMouseClick()
             
         self.ywn.camera.goHome()
 
@@ -60,7 +67,7 @@ class EventHandler(object):
     def cameraGoingHome(self):
         
         if self.ywn.focusOn != None:
-            self.ywn.focusOn.request(Events.cameraGoingHome)
+            self.ywn.focusOn.onCameraGoingHome()
         
         self.ywn.focusOn = None
     
