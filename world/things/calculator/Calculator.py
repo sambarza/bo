@@ -101,6 +101,8 @@ class Calculator(Thing):
         
     def onMouseMoving(self, mouseOnInfo, previousMouseOnInfo):
         
+        Thing.onMouseMoving(self, mouseOnInfo, previousMouseOnInfo)
+        
         if self.fsm.state != self.fsm.AtHomeWithFocus:
             return
         

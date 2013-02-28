@@ -69,7 +69,7 @@ class Ywn(ShowBase):
 
     def initializeMouseWatcher(self):
     
-        self.mouseWatcher = MouseWatcher(self.taskMgr, self.eventHandler, self.picker)
+        self.mouseWatcher = MouseWatcher(self, self.taskMgr, self.eventHandler, self.picker)
         
     def initializeTooltip(self):
         
@@ -84,6 +84,10 @@ class Ywn(ShowBase):
         self.house = loader.loadModel('models/bedroom')
         self.house.reparentTo(render)
         self.house.setPosHprScale(0.00, 0.00, 0.00, 180.00, 0.00, 0.00, 1.26, 1.26, 1.26)
+        
+        #self.house = loader.loadModel('models/FarmHouse/FarmHouse.egg')
+        #self.house.reparentTo(render)
+        #self.house.setPosHprScale(-6.47, 17.49, 1.80, 180.00, 0.00, 0.00, 5.00, 5.00, 5.00)
         
     def loadLights(self):
 

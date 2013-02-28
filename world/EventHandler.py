@@ -18,29 +18,28 @@ class EventHandler(object):
         '''
         self.ywn = ywn
 
-        self.ywn.accept('mouse1',self.eventLeftMouseDown)
-        self.ywn.accept('mouse1-up',self.eventLeftMouseUp)
-        
-        self.ywn.accept('mouse3-up',self.eventRightMouseUp)
-        self.ywn.accept('wheel_up',self.scrollLeft)
-        self.ywn.accept('wheel_down',self.scrollRight)
         self.ywn.accept("escape", sys.exit, [0])
         
-    def scrollLeft(self):
+    def eventLongLeftButtonDown(self, mouseOnInfo):
+        
+        if mouseOnInfo:
+            mouseOnInfo.thing.onLongLeftButtonDown(mouseOnInfo)
+
+    def eventScrollLeft(self):
         
         self.ywn.camera.lookLeft()
         
-    def scrollRight(self):
+    def eventScrollRight(self):
         
         self.ywn.camera.lookRight()
 
-    def eventLeftMouseDown(self):
-               
-        if self.ywn.mouseWatcher.mouseOnInfo:
-            self.ywn.mouseWatcher.mouseOnInfo.thing.onLeftMouseDown(self.ywn.mouseWatcher.mouseOnInfo)
+    def eventLeftMouseDown(self, mouseOnInfo):
+        
+        if mouseOnInfo:
+            mouseOnInfo.thing.onLeftMouseDown(mouseOnInfo)
             
     def eventLeftMouseUp(self):
-               
+
         if self.ywn.mouseWatcher.mouseOnInfo:
             self.ywn.mouseWatcher.mouseOnInfo.thing.onLeftMouseUp(self.ywn.mouseWatcher.mouseOnInfo)
 

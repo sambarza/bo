@@ -4,13 +4,32 @@ Created on 23/feb/2013
 @author: barzaghis
 '''
 
+class MousePosition(object):
+    
+    def __init__(self):
+        
+        self.x = 0
+        self.y = 0
+    
+    def getCurrentPosition(self):
+        
+        mpos = base.mouseWatcherNode.getMouse()
+        
+        self.x = mpos.getX()
+        self.y = mpos.getY()
+    
+    def copyFrom(self, position):
+        
+        self.x = position.x
+        self.y = position.y
+        
 class MouseWatcher(object):
     '''
     classdocs
     '''
 
 
-    def __init__(self, taskMgr, eventHandler, picker):
+    def __init__(self, ywn, taskMgr, eventHandler, picker):
         '''
         Constructor
         '''
@@ -21,14 +40,56 @@ class MouseWatcher(object):
         self.previousMouseOn = None
         self.previousMouseOnInfo = None
         
-        self.mouse_x = 0
-        self.mouse_y = 0
+        self.currentPosition = MousePosition()
+        self.previousPosition = MousePosition()
         
         self.eventHandler = eventHandler
         
         self.picker = picker
         
+        ywn.accept('mouse1',self.leftMouseDown)
+        ywn.accept('mouse1-up',self.leftMouseUp)
+        
+        ywn.accept('mouse3-up',self.rightMouseUp)
+        ywn.accept('wheel_up',self.scrollLeft)
+        ywn.accept('wheel_down',self.scrollRight)
+        
+        self.leftMouseIsDown = False
+        self.leftMouseDownStartTime = None
+        
         taskMgr.add(self.taskMouseOn, 'getMouseOn')
+        
+    def leftMouseDown(self):
+        
+        self.leftMouseDownStartTime = globalClock.getRealTime()
+        self.leftMouseIsDown = True
+        
+        taskMgr.add(self.taskMouseLongLeftButton, 'getMouseContextMenu')
+        taskMgr.add(self.taskMouseDrag, 'getMouseDrag')
+        
+        self.eventHandler.eventLeftMouseDown(self.mouseOnInfo)
+        
+    def leftMouseUp(self):
+        
+        self.leftMouseDownStartTime = None
+        self.leftMouseIsDown = False
+        
+        taskMgr.remove('getMouseContextMenu')
+        taskMgr.remove('getMouseDrag')
+        
+        self.eventHandler.eventLeftMouseUp()
+        
+    def rightMouseUp(self):
+        
+        self.eventHandler.eventRightMouseUp()
+        
+    def scrollLeft(self):
+        
+        self.eventHandler.eventScrollLeft()
+        
+    def scrollRight(self):
+        
+        self.eventHandler.eventScrollRight()
         
     def taskMouseOn(self, task):
         
@@ -39,34 +100,52 @@ class MouseWatcher(object):
         self.previousMouseOnInfo = self.mouseOnInfo
         self.previousMouseOn = self.mouseOn
         self.mouseOn = None
+        
+        self.previousPosition.copyFrom(self.currentPosition)
 
-        mpos = base.mouseWatcherNode.getMouse()
+        self.currentPosition.getCurrentPosition()
         
-        self.mouse_x = mpos.getX()
-        self.mouse_y = mpos.getY()
+        self.mouseOnInfo = self.picker.getMouseOn(self.currentPosition.x, self.currentPosition.y)
+
+        self.mouseIsMoved = self.mouseMoved(self.previousPosition, self.currentPosition)
         
-        self.mouseOnInfo = self.picker.getMouseOn(self.mouse_x, self.mouse_y)
-        
+        if self.mouseIsMoved:
+            self.leftMouseDownStartTime = globalClock.getRealTime()
+            
         if self.mouseOnInfo:
             self.mouseOn = self.mouseOnInfo.thing
         
         if self.mouseOn <> self.previousMouseOn:
             self.eventHandler.eventMouseOnNewThing(self.previousMouseOn, self.mouseOn, self.mouseOnInfo)
             
-        if self.mouseMoved(self.previousMouseOnInfo, self.mouseOnInfo) and self.mouseOn == self.previousMouseOn:
+        if self.mouseIsMoved and self.mouseOn == self.previousMouseOn:
             self.eventHandler.eventMouseMovingOnThing(self.mouseOn, self.mouseOnInfo, self.previousMouseOnInfo)
             
         return task.cont
     
-    def mouseMoved(self, previousMouseInfo, newMouseInfo):
+    def taskMouseDrag(self, task):
         
-        if previousMouseInfo == None:
-            return False
-
-        if newMouseInfo == None:
-            return False
+        if self.leftMouseIsDown and self.mouseIsMoved and self.mouseOn == self.previousMouseOn:
+            print "Start drag"
+            return task.done
         
-        if ( previousMouseInfo.mouse_x <> newMouseInfo.mouse_x ) or ( previousMouseInfo.mouse_y <> newMouseInfo.mouse_y ):
+        return task.cont
+        
+    def taskMouseLongLeftButton(self, task):
+        
+        currentTime = globalClock.getRealTime()
+        currentButtonElapsed = currentTime - self.leftMouseDownStartTime
+        
+        if currentButtonElapsed >= 0.7:
+            taskMgr.remove('getMouseDrag')
+            self.eventHandler.eventLongLeftButtonDown(self.mouseOnInfo)
+            return task.done
+        
+        return task.cont
+    
+    def mouseMoved(self, previousPosition, currentPosition):
+        
+        if ( previousPosition.x <> currentPosition.x ) or ( previousPosition.y <> currentPosition.y ):
             return True
         else:
             return False

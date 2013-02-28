@@ -112,10 +112,16 @@ class Thing(object):
         
         self.request(Events.cameraGoingHome)
         
+    def onLongLeftButtonDown(self, mouseInfo):
+        
+        print "Context menu"
+        
     def canGetMouseHover(self):
+
         return True
     
     def updateTooltip(self):
+        
         self.ywn.tooltip.setText(self.getDefaultAction() + " " + self.getThingName() + " " + self.Id)
         
     def onMouseMoving(self, mouseOnInfo, previousMouseOnInfo):

@@ -39,6 +39,6 @@ class Tooltip(object):
         
     def taskMouseTooltip(self, task):
         
-        self.tooltipNodePath.setPos(self.ywn.mouseWatcher.mouse_x * self.ywn.getAspectRatio(), 0, self.ywn.mouseWatcher.mouse_y)
+        self.tooltipNodePath.setPos(self.ywn.mouseWatcher.currentPosition.x * self.ywn.getAspectRatio(), 0, self.ywn.mouseWatcher.currentPosition.y)
         
         return task.cont
